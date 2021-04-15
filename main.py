@@ -23,6 +23,8 @@ from resources.resolver import resolve
 from utils import *
 from plot import plot_timeseries, plot_vaccinations_series
 
+
+
 CONFIG_FILE="config.json"
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -643,3 +645,46 @@ if __name__ == "__main__":
         config = json.load(f)
     main(config)
 
+################FLASK STARTS HERE############
+@app.route('/')
+def index():
+  return render_template("index.html")
+
+
+# The bot entry point. Telegram send HTTPS POST request whenever there is an update for the bot.
+# Therefore, we only accept the POST method. 
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    """Webhook for the telegram bot.
+    Args:
+        request: A flask.Request object.
+    Returns:
+        Response text.
+    """
+
+    logger.info("In webhook handler")
+    global bot_lang
+
+    if request.method == "POST":
+        global update
+        update = Update.de_json(request.get_json(force=True), bot)
+
+        # your bot can receive updates without messages
+        if update.message:
+            if timeout(update.message):
+                return "Timeout"
+            bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+            if update.message.text in ("/start", "/Start"):
+                start()
+                return "ok"
+
+            # default
+            keyboard_handler()
+            return "ok"
+
+
+if __name__ == "__main__":
+    # app.run(host='0.0.0.0', port=8443)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8443)
+################FLASK ENDS HERE############
