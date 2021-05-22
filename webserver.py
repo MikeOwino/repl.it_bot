@@ -9,7 +9,7 @@ log.setLevel(logging.ERROR)
 def hello_world():
   return """
     <h1 style='color: black;'>The bot is up and running...</h2>
-    <img src="https://w.wallhaven.cc/full/3z/wallhaven-3zqzw9.jpg" width="1500" height="700">
+    <img src="https://w.wallhaven.cc/full/4g/wallhaven-4g95z7.png" width="1500" height="700">
     """
 if __name__ == '__main__':
   app.run(host='0.0.0.0')
